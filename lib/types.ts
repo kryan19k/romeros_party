@@ -1,11 +1,20 @@
 export type Lang = "en" | "es";
 export type Bi = { es: string; en: string };
 
-export const CATEGORIES = ["jumpers", "tents", "tables", "extras"] as const;
+/** Rentals first, then things the store sells. */
+export const CATEGORIES = ["jumpers", "tents", "tables", "dresses", "shoes", "decor", "extras"] as const;
 export type Category = (typeof CATEGORIES)[number];
 
-/** "event" = price per event, "each" = price per piece (chairs, tables…) */
-export type Unit = "event" | "each";
+export const RENTAL_CATEGORIES: readonly Category[] = ["jumpers", "tents", "tables"];
+
+export const OCCASIONS = ["baptism", "confirmation", "communion", "quince", "wedding", "birthday"] as const;
+export type Occasion = (typeof OCCASIONS)[number];
+
+export const AUDIENCES = ["all", "girls", "boys"] as const;
+export type Audience = (typeof AUDIENCES)[number];
+
+/** "event" = rental price per event, "each" = rental price per piece, "sale" = price to buy */
+export type Unit = "event" | "each" | "sale";
 
 export interface Item {
   id: string;
@@ -15,6 +24,10 @@ export interface Item {
   price: number | null;
   unit: Unit;
   stock: number | null;
+  occasions: Occasion[];
+  audience: Audience;
+  /** free text, e.g. "Sizes 2–14" */
+  sizes: string;
   /** file name inside the uploads folder, served at /uploads/<image> */
   image: string | null;
   available: boolean;

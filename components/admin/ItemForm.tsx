@@ -8,9 +8,9 @@ import { useLang } from "../Providers";
 import { BackLink } from "./Shell";
 import { deleteItemAction, saveItemAction } from "@/lib/actions";
 import { imageSrc } from "@/lib/image";
-import { bi, CATEGORIES, type Category, type Item, type Unit } from "@/lib/types";
+import { AUDIENCES, bi, CATEGORIES, OCCASIONS, RENTAL_CATEGORIES, type Audience, type Category, type Item, type Occasion, type Unit } from "@/lib/types";
 
-const CAT_EMOJI: Record<Category, string> = { jumpers: "🏰", tents: "⛺", tables: "🪑", extras: "🎈" };
+const CAT_EMOJI: Record<Category, string> = { jumpers: "🏰", tents: "⛺", tables: "🪑", dresses: "👗", shoes: "👟", decor: "🎈", extras: "🎁" };
 
 /** Phone photos are huge; shrink to a web-friendly JPEG before uploading. */
 async function shrink(file: File): Promise<File> {
@@ -34,6 +34,8 @@ export function ItemForm({ item }: { item?: Item }) {
   const [state, action, pending] = useActionState(saveItemAction, null);
   const [category, setCategory] = useState<Category>(item?.category ?? "jumpers");
   const [unit, setUnit] = useState<Unit>(item?.unit ?? "event");
+  const [occasions, setOccasions] = useState<Occasion[]>(item?.occasions ?? []);
+  const [audience, setAudience] = useState<Audience>(item?.audience ?? "all");
   const [available, setAvailable] = useState(item?.available ?? true);
   const [preview, setPreview] = useState<string | null>(item?.image ? imageSrc(item.image) : null);
   const [removed, setRemoved] = useState(false);
@@ -53,7 +55,7 @@ export function ItemForm({ item }: { item?: Item }) {
   }
   function pickCategory(c: Category) {
     setCategory(c);
-    if (!item) setUnit(c === "tables" || c === "extras" ? "each" : "event");
+    if (!item) setUnit(RENTAL_CATEGORIES.includes(c) ? (c === "tables" ? "each" : "event") : "sale");
   }
 
   const errMsg = state?.error
@@ -69,6 +71,8 @@ export function ItemForm({ item }: { item?: Item }) {
         {item && <input type="hidden" name="id" value={item.id} />}
         <input type="hidden" name="category" value={category} />
         <input type="hidden" name="unit" value={unit} />
+        <input type="hidden" name="audience" value={audience} />
+        {occasions.map((o) => <input key={o} type="hidden" name="occasions" value={o} />)}
         <input type="hidden" name="available" value={available ? "1" : "0"} />
         <input type="hidden" name="removePhoto" value={removed ? "1" : "0"} />
 
@@ -133,11 +137,11 @@ export function ItemForm({ item }: { item?: Item }) {
           </div>
           <div>
             <span className="label !text-xl">{a.unit}</span>
-            <div className="grid grid-cols-2 gap-2">
-              {(["event", "each"] as const).map((u) => (
+            <div className="grid grid-cols-3 gap-2">
+              {(["event", "each", "sale"] as const).map((u) => (
                 <button key={u} type="button" aria-pressed={unit === u} onClick={() => setUnit(u)}
                   className={`rounded-2xl border-2 px-3 py-3 font-heading text-lg font-semibold ${unit === u ? "border-pink bg-pink/10 ring-4 ring-pink/25" : "border-line bg-surface"}`}>
-                  {u === "event" ? a.unitEvent : a.unitEach}
+                  {u === "event" ? a.unitEvent : u === "each" ? a.unitEach : a.unitSale}
                 </button>
               ))}
             </div>
@@ -145,6 +149,40 @@ export function ItemForm({ item }: { item?: Item }) {
           <div className="sm:col-span-2">
             <label className="label !text-xl" htmlFor="stock">📦 {a.stock}</label>
             <input id="stock" name="stock" inputMode="numeric" className="input max-w-40 !text-xl" defaultValue={item?.stock ?? ""} maxLength={6} />
+          </div>
+        </section>
+
+        {/* occasions, who, sizes */}
+        <section className="card space-y-5 p-5">
+          <div>
+            <h2 className="label !text-xl">🎉 {a.occasions}</h2>
+            <div className="flex flex-wrap gap-2">
+              {OCCASIONS.map((o) => {
+                const on = occasions.includes(o);
+                return (
+                  <button key={o} type="button" aria-pressed={on} onClick={() => setOccasions(on ? occasions.filter((x) => x !== o) : [...occasions, o])}
+                    className={`rounded-full border-2 px-4 py-2 font-heading text-lg font-semibold ${on ? "border-purple bg-purple text-white" : "border-line bg-surface"}`}>
+                    {on ? "✓ " : ""}{t.occ[o]}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <div>
+            <h2 className="label !text-xl">{a.audience}</h2>
+            <div className="flex flex-wrap gap-2">
+              {AUDIENCES.map((x) => (
+                <button key={x} type="button" aria-pressed={audience === x} onClick={() => setAudience(x)}
+                  className={`rounded-full border-2 px-5 py-2 font-heading text-lg font-semibold ${audience === x ? "border-navy bg-navy text-bg" : "border-line bg-surface"}`}>
+                  {x === "girls" ? "👧 " : x === "boys" ? "👦 " : ""}{t.aud[x]}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className="label !text-xl" htmlFor="sizes">📏 {a.sizes}</label>
+            <input id="sizes" name="sizes" className="input max-w-sm !text-xl" defaultValue={item?.sizes} maxLength={80} />
+            <p className="mt-1 text-muted">{a.sizesHint}</p>
           </div>
         </section>
 

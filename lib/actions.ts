@@ -25,7 +25,7 @@ import {
   requireAdmin,
   startSession,
 } from "./auth";
-import { CATEGORIES, type Category, type Lang, type Unit } from "./types";
+import { AUDIENCES, CATEGORIES, OCCASIONS, RENTAL_CATEGORIES, type Audience, type Category, type Lang, type Occasion, type Unit } from "./types";
 
 export type FormState = { error?: string; ok?: boolean } | null;
 
@@ -78,7 +78,11 @@ export async function saveItemAction(_: FormState, fd: FormData): Promise<FormSt
 
   const category = str(fd, "category") as Category;
   if (!CATEGORIES.includes(category)) return { error: "category" };
-  const unit: Unit = str(fd, "unit") === "each" ? "each" : "event";
+  const unitRaw = str(fd, "unit");
+  const unit: Unit = unitRaw === "each" || unitRaw === "sale" ? unitRaw : "event";
+  const occasions = fd.getAll("occasions").map(String).filter((o): o is Occasion => (OCCASIONS as readonly string[]).includes(o));
+  const audienceRaw = str(fd, "audience");
+  const audience: Audience = (AUDIENCES as readonly string[]).includes(audienceRaw) ? (audienceRaw as Audience) : "all";
 
   const priceRaw = str(fd, "price", 12).replace(/[$,\s]/g, "");
   const price = priceRaw === "" ? null : Number(priceRaw);
@@ -104,6 +108,9 @@ export async function saveItemAction(_: FormState, fd: FormData): Promise<FormSt
     unit,
     price,
     stock,
+    occasions,
+    audience,
+    sizes: str(fd, "sizes", 80),
     name: { es: nameEs, en: nameEn },
     desc: { es: str(fd, "descEs", 600), en: str(fd, "descEn", 600) },
     available: str(fd, "available") === "1",
@@ -203,7 +210,7 @@ export async function submitQuoteAction(input: QuoteInput): Promise<QuoteResult>
 
   if (name.length < 2) return { ok: false, error: "name" };
   if (phone.replace(/\D/g, "").length < 10) return { ok: false, error: "phone" };
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return { ok: false, error: "date" };
+  if (date && !/^\d{4}-\d{2}-\d{2}$/.test(date)) return { ok: false, error: "date" };
   if (mode === "delivery" && address.length < 5) return { ok: false, error: "address" };
 
   try {
@@ -216,6 +223,8 @@ export async function submitQuoteAction(input: QuoteInput): Promise<QuoteResult>
         return it ? [{ id: it.id, name: it.name, qty }] : [];
       });
     if (!lines.length && !notes) return { ok: false, error: "empty" };
+    const rents = lines.some((l) => RENTAL_CATEGORIES.includes(catalog.find((i) => i.id === l.id)!.category));
+    if (rents && !date) return { ok: false, error: "date" };
     const id = crypto.randomUUID();
     await addRequest({
       id,

@@ -9,7 +9,7 @@ import { Price } from "./ItemCard";
 import { useCart } from "@/lib/cart";
 import { imageSrc } from "@/lib/image";
 import { submitQuoteAction } from "@/lib/actions";
-import { bi, waLink, type Item } from "@/lib/types";
+import { bi, RENTAL_CATEGORIES, waLink, type Item } from "@/lib/types";
 
 const COLORS = ["#e8336d", "#ffc21a", "#22a24a", "#1c9ee0", "#7a3fc4", "#ff8a1f"];
 function Burst() {
@@ -48,6 +48,8 @@ export function QuoteForm({ items, phone, initialMode }: { items: Item[]; phone:
     return item ? [{ item, qty: l.qty }] : [];
   });
   const today = new Date().toISOString().slice(0, 10);
+  // The event date only matters for rentals; if she is just buying a dress or decor, it is optional.
+  const needsDate = lines.length === 0 || lines.some((l) => RENTAL_CATEGORIES.includes(l.item.category));
 
   function summary(fd: FormData) {
     const q = t.quote;
@@ -58,7 +60,7 @@ export function QuoteForm({ items, phone, initialMode }: { items: Item[]; phone:
       ...rows,
       "",
       `${q.waName}: ${fd.get("name")}`,
-      `${q.waDate}: ${fd.get("date")}`,
+      fd.get("date") ? `${q.waDate}: ${fd.get("date")}` : "",
       mode === "delivery" ? `${q.waDelivery}: ${fd.get("address")}` : q.waPickup,
       fd.get("notes") ? `${q.waNotes}: ${fd.get("notes")}` : "",
     ]
@@ -167,8 +169,8 @@ export function QuoteForm({ items, phone, initialMode }: { items: Item[]; phone:
             <input id="phone" name="phone" type="tel" inputMode="tel" className="input" autoComplete="tel" placeholder="(951) 555-0123" required maxLength={30} />
           </div>
           <div className="sm:col-span-2">
-            <label className="label" htmlFor="date">{t.quote.date}</label>
-            <input id="date" name="date" type="date" className="input" min={today} required />
+            <label className="label" htmlFor="date">{needsDate ? t.quote.date : t.quote.dateOptional}</label>
+            <input id="date" name="date" type="date" className="input" min={today} required={needsDate} />
           </div>
         </div>
 

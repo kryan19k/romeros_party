@@ -76,7 +76,7 @@ export function ItemList({ items, flash }: { items: Item[]; flash: "saved" | "de
               <p className="truncate font-heading text-2xl font-bold">{bi(it.name, lang)}</p>
               <p className="text-muted">
                 {t.cat[it.category]} ·{" "}
-                {it.price === null ? a.noPrice : `$${it.price} ${it.unit === "each" ? a.priceEach : a.priceEvent}`}
+                {it.price === null ? a.noPrice : `$${it.price}${it.unit === "each" ? ` ${a.priceEach}` : it.unit === "event" ? ` ${a.priceEvent}` : ""}`}
                 {it.stock !== null && ` · ${t.a.items.stock.replace("{n}", String(it.stock))}`}
               </p>
             </div>

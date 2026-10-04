@@ -166,6 +166,7 @@ h1, h2, h3, h4 {
   letter-spacing: 0.02em;
 }
 
+@layer components {
 .card {
   background: var(--surface);
   border: 2px solid var(--line);
@@ -212,6 +213,7 @@ h1, h2, h3, h4 {
 }
 .input:focus { border-color: var(--navy); box-shadow: 0 0 0 4px color-mix(in srgb, var(--navy) 25%, transparent); }
 .label { display: block; font-family: var(--font-heading); font-weight: 600; font-size: 1.05rem; margin-bottom: 0.4rem; }
+}
 
 :focus-visible { outline: 3px solid var(--sky); outline-offset: 3px; border-radius: 6px; }
 

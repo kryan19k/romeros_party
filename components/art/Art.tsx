@@ -104,8 +104,75 @@ export function Extras({ className = "" }: { className?: string }) {
   );
 }
 
+export function Dress({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 220 180" className={className} aria-hidden>
+      <ellipse cx="110" cy="170" rx="70" ry="7" fill="#000" opacity=".12" />
+      {/* hanger */}
+      <path d="M110 10 v10 M110 20 c-10 0 -10 -12 0 -12 c8 0 9 8 3 11" stroke="#9c9ac4" strokeWidth="3" fill="none" strokeLinecap="round" />
+      <path d="M110 22 L60 46 h100z" stroke="#9c9ac4" strokeWidth="3" fill="none" strokeLinejoin="round" />
+      {/* bodice */}
+      <path d="M84 48 q-4 14 8 30 h36 q12 -16 8 -30 q-10 8 -26 8 t-26 -8z" fill="#ffffff" stroke="#d7d4f2" strokeWidth="3" strokeLinejoin="round" />
+      <path d="M90 78 h40" stroke="#ff8fb4" strokeWidth="6" strokeLinecap="round" />
+      <circle cx="110" cy="78" r="6" fill="#ff8fb4" /><circle cx="110" cy="78" r="2.5" fill="#fff" />
+      {/* skirt */}
+      <path d="M92 80 C70 110 40 140 28 160 q82 18 164 0 C180 140 150 110 128 80z" fill="#fff" stroke="#d7d4f2" strokeWidth="3" strokeLinejoin="round" />
+      <path d="M96 84 C84 116 64 140 52 160 M110 84 v78 M124 84 C136 116 156 140 168 160" stroke="#e4e1f7" strokeWidth="2.5" fill="none" />
+      <path d="M30 156 q20 12 40 0 q20 12 40 0 q20 12 40 0 q20 12 40 0" stroke="#ff8fb4" strokeWidth="3" fill="none" />
+      <circle cx="178" cy="40" r="4" fill="#ffc21a" /><circle cx="40" cy="62" r="3" fill="#7a3fc4" /><circle cx="188" cy="82" r="3" fill="#1c9ee0" />
+    </svg>
+  );
+}
+
+export function Shoes({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 220 180" className={className} aria-hidden>
+      <ellipse cx="110" cy="160" rx="84" ry="7" fill="#000" opacity=".12" />
+      {/* girl shoe: mary jane */}
+      <path d="M22 120 q-4 -40 14 -52 q10 -6 22 4 q12 10 30 14 q22 4 24 22 v16 q0 8 -8 8 h-76 q-6 0 -6 -12z" fill="#ff8fb4" stroke="#d6336c" strokeWidth="3" strokeLinejoin="round" />
+      <path d="M26 138 h88" stroke="#7a3fc4" strokeWidth="6" strokeLinecap="round" opacity=".7" />
+      <path d="M44 100 q20 -8 38 6" stroke="#fff" strokeWidth="5" fill="none" strokeLinecap="round" />
+      <circle cx="64" cy="100" r="6" fill="#ffc21a" />
+      {/* boy shoe: loafer */}
+      <path d="M118 128 q-2 -34 12 -46 q8 -6 20 -4 q16 6 30 12 q16 6 20 20 v18 q0 6 -8 6 h-66 q-8 0 -8 -6z" fill="#2b2fb0" stroke="#1b1a58" strokeWidth="3" strokeLinejoin="round" />
+      <path d="M118 148 h92" stroke="#1b1a58" strokeWidth="7" strokeLinecap="round" />
+      <path d="M150 96 q12 -8 26 2" stroke="#6a70ff" strokeWidth="4" fill="none" strokeLinecap="round" />
+      <path d="M163 100 h14" stroke="#ffc21a" strokeWidth="4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function Decor({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 220 180" className={className} aria-hidden>
+      <ellipse cx="110" cy="170" rx="92" ry="7" fill="#000" opacity=".12" />
+      {/* backdrop frame */}
+      <path d="M30 168 V40 M190 168 V40 M24 40 H196" stroke="#9c9ac4" strokeWidth="6" strokeLinecap="round" />
+      <path d="M36 44 H184 V160 H36z" fill="#ffe3ee" opacity=".85" />
+      {/* balloon arch */}
+      <g>
+        <ellipse cx="38" cy="140" rx="14" ry="18" fill="#e8336d" />
+        <ellipse cx="44" cy="112" rx="14" ry="18" fill="#ffc21a" />
+        <ellipse cx="38" cy="84" rx="14" ry="18" fill="#1c9ee0" />
+        <ellipse cx="50" cy="58" rx="14" ry="17" fill="#7a3fc4" />
+        <ellipse cx="76" cy="44" rx="15" ry="17" fill="#e8336d" />
+        <ellipse cx="110" cy="40" rx="15" ry="17" fill="#ffc21a" />
+        <ellipse cx="144" cy="44" rx="15" ry="17" fill="#22a24a" />
+        <ellipse cx="170" cy="58" rx="14" ry="17" fill="#e8336d" />
+        <ellipse cx="182" cy="84" rx="14" ry="18" fill="#1c9ee0" />
+        <ellipse cx="176" cy="112" rx="14" ry="18" fill="#ffc21a" />
+        <ellipse cx="182" cy="140" rx="14" ry="18" fill="#7a3fc4" />
+        <ellipse cx="104" cy="36" rx="4" ry="6" fill="#fff" opacity=".55" />
+      </g>
+      {/* sign */}
+      <rect x="76" y="96" width="68" height="34" rx="8" fill="#fff" stroke="#e8336d" strokeWidth="3" />
+      <path d="M92 118 l6 -14 l6 14 M94 114 h8 M110 104 v14 M110 104 h8 M118 104 q4 7 0 14 M126 104 l8 14 M134 104 l-8 14" stroke="#262b9c" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function CategoryArt({ category, className = "" }: { category: Category; className?: string }) {
-  const C = { jumpers: BounceHouse, tents: Tent, tables: TableChairs, extras: Extras }[category];
+  const C = { jumpers: BounceHouse, tents: Tent, tables: TableChairs, dresses: Dress, shoes: Shoes, decor: Decor, extras: Extras }[category];
   return <C className={className} />;
 }
 

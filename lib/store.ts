@@ -1,8 +1,8 @@
 import "server-only";
 import { createClient, type Row } from "@libsql/client";
 import { mkdirSync } from "fs";
-import { DEFAULT_SETTINGS, SEED_ITEMS } from "./seed";
-import type { Item, QuoteRequest, Settings } from "./types";
+import { DEFAULT_SETTINGS, SEED_ITEMS, SEED_ITEMS_V2 } from "./seed";
+import { OCCASIONS, type Item, type Occasion, type QuoteRequest, type Settings } from "./types";
 
 /**
  * Storage layer on libSQL (SQLite).
@@ -27,6 +27,7 @@ const SCHEMA = [
     address TEXT NOT NULL DEFAULT '', notes TEXT NOT NULL DEFAULT '', lang TEXT NOT NULL DEFAULT 'es',
     items TEXT NOT NULL DEFAULT '[]')`,
   `CREATE TABLE IF NOT EXISTS settings (id INTEGER PRIMARY KEY CHECK (id = 1), data TEXT NOT NULL)`,
+  `CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS photos (name TEXT PRIMARY KEY, type TEXT NOT NULL, data BLOB NOT NULL)`,
 ];
 
@@ -36,8 +37,21 @@ function init() {
   ready ??= (async () => {
     await db.batch(SCHEMA, "write");
     const first = await db.execute({ sql: "INSERT OR IGNORE INTO settings (id, data) VALUES (1, ?)", args: [JSON.stringify(DEFAULT_SETTINGS)] });
+    // Columns added after the first release (older databases get them here).
+    const cols = new Set((await db.execute("PRAGMA table_info(items)")).rows.map((c) => String(c.name)));
+    const add: [string, string][] = [
+      ["occasions", "TEXT NOT NULL DEFAULT '[]'"],
+      ["audience", "TEXT NOT NULL DEFAULT 'all'"],
+      ["sizes", "TEXT NOT NULL DEFAULT ''"],
+    ];
+    for (const [c, def] of add) if (!cols.has(c)) await db.execute(`ALTER TABLE items ADD COLUMN ${c} ${def}`);
     if (first.rowsAffected) {
-      await db.batch(SEED_ITEMS.map((i) => insertItem(i)), "write");
+      await db.batch(SEED_ITEMS.map((i) => insertItem(i, true)), "write");
+    }
+    // Dresses, shoes, decor and supplies samples: added once, never re-added after the owner deletes them.
+    const v2 = await db.execute("INSERT OR IGNORE INTO meta (key, value) VALUES ('seed_v2', '1')");
+    if (v2.rowsAffected) {
+      await db.batch(SEED_ITEMS_V2.map((i) => insertItem(i, true)), "write");
     }
   })().catch((e) => {
     ready = null;
@@ -46,11 +60,11 @@ function init() {
   return ready;
 }
 
-const insertItem = (i: Item) => ({
-  sql: `INSERT OR REPLACE INTO items
-    (id, category, name_es, name_en, desc_es, desc_en, price, unit, stock, image, available, created_at, updated_at)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-  args: [i.id, i.category, i.name.es, i.name.en, i.desc.es, i.desc.en, i.price, i.unit, i.stock, i.image, i.available ? 1 : 0, i.createdAt, i.updatedAt],
+const insertItem = (i: Item, ignoreIfExists = false) => ({
+  sql: `INSERT OR ${ignoreIfExists ? "IGNORE" : "REPLACE"} INTO items
+    (id, category, name_es, name_en, desc_es, desc_en, price, unit, stock, occasions, audience, sizes, image, available, created_at, updated_at)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+  args: [i.id, i.category, i.name.es, i.name.en, i.desc.es, i.desc.en, i.price, i.unit, i.stock, JSON.stringify(i.occasions), i.audience, i.sizes, i.image, i.available ? 1 : 0, i.createdAt, i.updatedAt],
 });
 
 const toItem = (r: Row): Item => ({
@@ -61,6 +75,9 @@ const toItem = (r: Row): Item => ({
   price: r.price === null ? null : Number(r.price),
   unit: r.unit as Item["unit"],
   stock: r.stock === null ? null : Number(r.stock),
+  occasions: (JSON.parse(String(r.occasions ?? "[]")) as Occasion[]).filter((o) => OCCASIONS.includes(o)),
+  audience: r.audience as Item["audience"],
+  sizes: String(r.sizes ?? ""),
   image: r.image === null ? null : String(r.image),
   available: Number(r.available) === 1,
   createdAt: String(r.created_at),

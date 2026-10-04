@@ -6,18 +6,39 @@ import { AnimatePresence, motion } from "motion/react";
 import { useLang } from "../Providers";
 import { ItemCard } from "./ItemCard";
 import { useCart } from "@/lib/cart";
-import { CATEGORIES, type Category, type Item } from "@/lib/types";
+import { AUDIENCES, CATEGORIES, OCCASIONS, type Audience, type Category, type Item, type Occasion } from "@/lib/types";
 
-export function Catalog({ items, initialCat }: { items: Item[]; initialCat: Category | "all" }) {
+const CAT_EMOJI: Record<Category | "all", string> = { all: "✨", jumpers: "🏰", tents: "⛺", tables: "🪑", dresses: "👗", shoes: "👟", decor: "🎈", extras: "🎁" };
+
+function Chip({ active, onClick, children, tone = "pink" }: { active: boolean; onClick: () => void; children: React.ReactNode; tone?: "pink" | "purple" | "navy" }) {
+  const on = { pink: "border-pink bg-pink text-white", purple: "border-purple bg-purple text-white", navy: "border-navy bg-navy text-bg" }[tone];
+  return (
+    <button
+      role="tab"
+      aria-selected={active}
+      onClick={onClick}
+      className={`rounded-full border-2 px-4 py-1.5 font-heading text-lg font-semibold transition hover:scale-105 ${active ? on : "border-line bg-surface hover:border-pink"}`}
+    >
+      {children}
+    </button>
+  );
+}
+
+export function Catalog({ items, initialCat, initialOcc }: { items: Item[]; initialCat: Category | "all"; initialOcc: Occasion | "all" }) {
   const { t, f } = useLang();
   const [cat, setCat] = useState<Category | "all">(initialCat);
+  const [occ, setOcc] = useState<Occasion | "all">(initialOcc);
+  const [aud, setAud] = useState<Audience>("all");
   const [q, setQ] = useState("");
   const { count } = useCart();
 
   const term = q.trim().toLowerCase();
+  const showAudience = cat === "all" || cat === "dresses" || cat === "shoes";
   const shown = items.filter(
     (i) =>
       (cat === "all" || i.category === cat) &&
+      (occ === "all" || i.occasions.includes(occ)) &&
+      (!showAudience || aud === "all" || i.audience === "all" || i.audience === aud) &&
       (!term || `${i.name.es} ${i.name.en} ${i.desc.es} ${i.desc.en}`.toLowerCase().includes(term)),
   );
   const counts = (c: Category | "all") => items.filter((i) => c === "all" || i.category === c).length;
@@ -29,19 +50,41 @@ export function Catalog({ items, initialCat }: { items: Item[]; initialCat: Cate
         <p className="mx-auto mt-3 max-w-xl text-lg text-muted">{t.catalog.sub}</p>
       </div>
 
-      <div className="mt-8 flex flex-wrap justify-center gap-2" role="tablist">
+      <div className="mt-8 flex flex-wrap justify-center gap-2" role="tablist" aria-label={t.catalog.title}>
         {(["all", ...CATEGORIES] as const).map((c) => (
-          <button
-            key={c}
-            role="tab"
-            aria-selected={cat === c}
-            onClick={() => setCat(c)}
-            className={`relative rounded-full border-2 px-5 py-2 font-heading text-lg font-semibold transition hover:scale-105 ${cat === c ? "border-pink bg-pink text-white" : "border-line bg-surface hover:border-pink"}`}
-          >
-            {t.cat[c]} <span className="opacity-70">({counts(c)})</span>
-          </button>
+          <Chip key={c} active={cat === c} onClick={() => setCat(c)}>
+            {CAT_EMOJI[c]} {t.cat[c]} <span className="opacity-70">({counts(c)})</span>
+          </Chip>
         ))}
       </div>
+
+      <div className="mt-3 flex flex-wrap items-center justify-center gap-2" role="tablist" aria-label={t.catalog.occasionLabel}>
+        <span className="font-heading font-semibold text-muted">{t.catalog.occasionLabel}:</span>
+        <Chip tone="purple" active={occ === "all"} onClick={() => setOcc("all")}>{t.catalog.allOccasions}</Chip>
+        {OCCASIONS.map((o) => (
+          <Chip tone="purple" key={o} active={occ === o} onClick={() => setOcc(o)}>{t.occ[o]}</Chip>
+        ))}
+      </div>
+
+      <AnimatePresence initial={false}>
+        {showAudience && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="mt-3 flex flex-wrap items-center justify-center gap-2" role="tablist" aria-label={t.catalog.forLabel}>
+              <span className="font-heading font-semibold text-muted">{t.catalog.forLabel}:</span>
+              {AUDIENCES.map((a) => (
+                <Chip tone="navy" key={a} active={aud === a} onClick={() => setAud(a)}>
+                  {a === "girls" ? "👧 " : a === "boys" ? "👦 " : ""}{t.aud[a]}
+                </Chip>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="mx-auto mt-5 max-w-md">
         <input className="input text-center" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={`🔍 ${t.catalog.search}`} aria-label={t.catalog.search} />
@@ -56,7 +99,7 @@ export function Catalog({ items, initialCat }: { items: Item[]; initialCat: Cate
           ))}
         </AnimatePresence>
       </motion.div>
-      {shown.length === 0 && <p className="mt-16 text-center text-xl text-muted">{term ? t.catalog.noneSearch : t.catalog.none}</p>}
+      {shown.length === 0 && <p className="mt-16 text-center text-xl text-muted">{term || occ !== "all" || aud !== "all" ? t.catalog.noneSearch : t.catalog.none}</p>}
 
       <AnimatePresence>
         {count > 0 && (

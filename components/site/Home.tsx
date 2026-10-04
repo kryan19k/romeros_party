@@ -7,7 +7,7 @@ import { Logo } from "../Logo";
 import { useLang } from "../Providers";
 import { Reveal, SectionTitle, Stagger, StaggerItem } from "./Motion";
 import { ItemCard } from "./ItemCard";
-import { bi, telLink, waLink, type Category, type Item, type Settings } from "@/lib/types";
+import { bi, OCCASIONS, telLink, waLink, type Category, type Item, type Occasion, type Settings } from "@/lib/types";
 
 const FLOATERS = [
   { c: "#e8336d", left: "4%", top: "16%", h: "h-24", d: "0s", r: "-10deg" },
@@ -48,6 +48,7 @@ function Hero({ settings }: { settings: Settings }) {
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.7 }} className="mx-auto mt-5 max-w-xl text-xl text-muted lg:mx-0">
             <span className="rounded-lg bg-gold/90 px-2 font-heading font-semibold text-[#1b1a58]">{t.hero.sub}</span>
+            <span className="mt-3 block text-lg">{t.hero.sub2}</span>
           </motion.p>
           <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55, duration: 0.7 }} className="mt-8 flex flex-wrap justify-center gap-3 lg:justify-start">
             <Link href="/quote" className="btn btn-pink btn-lg">📝 {t.hero.ctaQuote}</Link>
@@ -102,8 +103,70 @@ const SERVICE_COLORS: Record<Category, string> = {
   jumpers: "from-purple/25 to-sky/20",
   tents: "from-green/25 to-sky/15",
   tables: "from-pink/25 to-gold/20",
+  dresses: "from-pink/30 to-purple/20",
+  shoes: "from-sky/25 to-purple/20",
+  decor: "from-gold/35 to-pink/20",
   extras: "from-orange/25 to-pink/15",
 };
+
+const OCC_STYLE: Record<Occasion, { e: string; c: string; cat: Category }> = {
+  baptism: { e: "🕊️", c: "from-sky/40 to-bg-2", cat: "dresses" },
+  confirmation: { e: "✝️", c: "from-purple/35 to-bg-2", cat: "dresses" },
+  communion: { e: "🌟", c: "from-gold/45 to-bg-2", cat: "dresses" },
+  quince: { e: "👑", c: "from-pink/40 to-bg-2", cat: "dresses" },
+  wedding: { e: "💍", c: "from-green/30 to-bg-2", cat: "decor" },
+  birthday: { e: "🎂", c: "from-orange/35 to-bg-2", cat: "decor" },
+};
+
+function Occasions() {
+  const { t } = useLang();
+  return (
+    <section className="mx-auto max-w-6xl px-4 pt-24">
+      <SectionTitle eyebrow={t.occasions.eyebrow} title={t.occasions.title} />
+      <Reveal className="mx-auto mt-3 max-w-2xl text-center text-lg text-muted">{t.occasions.sub}</Reveal>
+      <Stagger className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-3">
+        {OCCASIONS.map((o) => (
+          <StaggerItem key={o}>
+            <Link
+              href={`/catalog?occ=${o}`}
+              className={`group card flex h-full min-h-40 flex-col items-center justify-center gap-2 bg-gradient-to-br ${OCC_STYLE[o].c} p-5 text-center transition hover:-translate-y-2 hover:rotate-1 hover:border-pink`}
+            >
+              <span className="text-5xl transition duration-300 group-hover:scale-125 group-hover:-rotate-12">{OCC_STYLE[o].e}</span>
+              <span className="font-heading text-2xl font-bold">{t.occ[o]}</span>
+              <span className="font-heading text-sm font-semibold text-pink opacity-0 transition group-hover:opacity-100">{t.occasions.see} →</span>
+            </Link>
+          </StaggerItem>
+        ))}
+      </Stagger>
+    </section>
+  );
+}
+
+function Shop() {
+  const { t } = useLang();
+  const cats: Category[] = ["dresses", "shoes", "decor", "extras"];
+  return (
+    <section className="mx-auto max-w-6xl px-4 pt-24">
+      <SectionTitle eyebrow={t.shop.eyebrow} title={t.shop.title} />
+      <Reveal className="mx-auto mt-3 max-w-2xl text-center text-lg text-muted">{t.shop.sub}</Reveal>
+      <Stagger className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {cats.map((c) => (
+          <StaggerItem key={c}>
+            <Link href={`/catalog?cat=${c}`} className="card group block overflow-hidden transition hover:-translate-y-2 hover:border-pink">
+              <div className={`grid aspect-square place-items-center bg-gradient-to-br ${SERVICE_COLORS[c]}`}>
+                <CategoryArt category={c} className="h-[80%] transition duration-500 group-hover:scale-110 group-hover:rotate-2" />
+              </div>
+              <div className="p-5">
+                <h3 className="text-2xl font-bold">{t.cat[c]}</h3>
+                <p className="mt-1 text-muted">{t.catTag[c]}</p>
+              </div>
+            </Link>
+          </StaggerItem>
+        ))}
+      </Stagger>
+    </section>
+  );
+}
 
 function Services() {
   const { t } = useLang();
@@ -244,6 +307,8 @@ export function Home({ items, settings }: { items: Item[]; settings: Settings })
       <Hero settings={settings} />
       <Marquee />
       <Services />
+      <Occasions />
+      <Shop />
       <Steps />
       <Featured items={items} />
       <DeliveryBanner />

@@ -37,7 +37,7 @@ export function RequestList({ requests }: { requests: QuoteRequest[] }) {
               </div>
               <div className="space-y-3 p-5">
                 <p className="font-heading text-3xl font-bold">{q.name}</p>
-                <p className="text-xl">📅 <b>{r.date}:</b> {fmtDate(q.date)}</p>
+                {q.date && <p className="text-xl">📅 <b>{r.date}:</b> {fmtDate(q.date)}</p>}
                 <p className="text-xl">{q.mode === "delivery" ? `🚚 ${r.delivery}` : `🚗 ${r.pickup}`}{q.mode === "delivery" && q.address && <> — {q.address}</>}</p>
                 <div>
                   <p className="font-heading text-xl font-semibold">🎈 {r.items}</p>

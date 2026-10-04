@@ -13,6 +13,7 @@ import { bi, telLink, waLink, type Bi } from "@/lib/types";
 const LINKS = [
   { href: "/", key: "home" },
   { href: "/catalog", key: "catalog" },
+  { href: "/catalog?cat=dresses", key: "shop" },
   { href: "/delivery", key: "delivery" },
   { href: "/about", key: "about" },
 ] as const;
@@ -30,14 +31,14 @@ export function Navbar({ phone }: { phone: string }) {
           <Logo size="sm" />
         </Link>
 
-        <nav className="ml-6 hidden items-center gap-1 lg:flex" aria-label="Main">
+        <nav className="ml-4 hidden items-center gap-0.5 xl:flex" aria-label="Main">
           {LINKS.map((l) => {
-            const active = l.href === "/" ? path === "/" : path.startsWith(l.href);
+            const active = l.href === "/" ? path === "/" : !l.href.includes("?") && path.startsWith(l.href);
             return (
               <Link
                 key={l.href}
                 href={l.href}
-                className={`relative rounded-full px-4 py-2 font-heading text-lg font-medium transition hover:text-pink ${active ? "text-pink" : ""}`}
+                className={`relative whitespace-nowrap rounded-full px-3 py-2 font-heading text-lg font-medium transition hover:text-pink ${active ? "text-pink" : ""}`}
               >
                 {t.nav[l.key]}
                 {active && <motion.span layoutId="nav-dot" className="absolute inset-x-4 -bottom-0.5 h-1 rounded-full bg-gold" />}
@@ -49,7 +50,7 @@ export function Navbar({ phone }: { phone: string }) {
         <div className="ml-auto flex items-center gap-2">
           <LangToggle />
           <ThemeToggle />
-          <Link href="/quote" className="btn btn-pink relative !min-h-11 !px-4 !py-1.5 text-base">
+          <Link href="/quote" className="btn btn-pink relative !min-h-11 whitespace-nowrap !px-4 !py-1.5 text-base">
             <span className="hidden sm:inline">{t.nav.quote}</span>
             <span className="sm:hidden" aria-hidden>📝</span>
             <span className="sr-only sm:hidden">{t.nav.quote}</span>
@@ -64,13 +65,13 @@ export function Navbar({ phone }: { phone: string }) {
               </motion.span>
             )}
           </Link>
-          <a href={telLink(phone)} className="btn btn-gold !hidden !min-h-11 !px-4 !py-1.5 text-base xl:!inline-flex" aria-label={`${t.nav.call} ${phone}`}>
+          <a href={telLink(phone)} className="btn btn-gold !hidden !min-h-11 whitespace-nowrap !px-4 !py-1.5 text-base 2xl:!inline-flex" aria-label={`${t.nav.call} ${phone}`}>
             📞 {phone}
           </a>
           <button
             type="button"
             onClick={() => setOpen((o) => !o)}
-            className="grid size-11 place-items-center rounded-full border-2 border-line bg-surface text-2xl lg:hidden"
+            className="grid size-11 place-items-center rounded-full border-2 border-line bg-surface text-2xl xl:hidden"
             aria-label={open ? t.nav.close : t.nav.menu}
             aria-expanded={open}
           >
@@ -85,7 +86,7 @@ export function Navbar({ phone }: { phone: string }) {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t-2 border-line bg-bg lg:hidden"
+            className="overflow-hidden border-t-2 border-line bg-bg xl:hidden"
             aria-label="Mobile"
           >
             <div className="mx-auto flex max-w-6xl flex-col gap-1 p-4">

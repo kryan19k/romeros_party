@@ -14,7 +14,9 @@ export function Price({ item }: { item: Item }) {
   return (
     <span className="font-heading text-2xl font-bold text-pink">
       ${money}
-      <span className="ml-1 text-sm font-semibold text-muted">{item.unit === "each" ? t.catalog.each : t.catalog.perEvent}</span>
+      {item.unit !== "sale" && (
+        <span className="ml-1 text-sm font-semibold text-muted">{item.unit === "each" ? t.catalog.each : t.catalog.perEvent}</span>
+      )}
     </span>
   );
 }
@@ -42,10 +44,21 @@ export function ItemCard({ item }: { item: Item }) {
         <span className="absolute right-3 top-3 rounded-full bg-gold px-3 py-1 font-heading text-xs font-bold uppercase tracking-wide text-[#1b1a58]">
           {t.cat[item.category]}
         </span>
+        <span className={`absolute bottom-3 left-3 rounded-full px-3 py-1 font-heading text-xs font-bold uppercase tracking-wide text-white ${item.unit === "sale" ? "bg-pink" : "bg-navy !text-bg"}`}>
+          {item.unit === "sale" ? t.catalog.buy : t.catalog.rent}
+        </span>
       </div>
       <div className="flex flex-1 flex-col gap-2 p-5">
         <h3 className="text-2xl font-bold">{name}</h3>
         {desc && <p className="text-muted">{desc}</p>}
+        {(item.sizes || item.occasions.length > 0) && (
+          <div className="flex flex-wrap items-center gap-1.5">
+            {item.sizes && <span className="rounded-full bg-sky/20 px-2.5 py-0.5 text-sm font-semibold">📏 {t.catalog.sizes}: {item.sizes}</span>}
+            {item.occasions.slice(0, 3).map((o) => (
+              <span key={o} className="rounded-full bg-purple/15 px-2.5 py-0.5 text-sm font-semibold">{t.occ[o]}</span>
+            ))}
+          </div>
+        )}
         <div className="mt-auto pt-3">
           <Price item={item} />
         </div>
