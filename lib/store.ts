@@ -10,6 +10,9 @@ import { OCCASIONS, type Item, type Occasion, type QuoteRequest, type Settings }
  *  - Production: set TURSO_DATABASE_URL + TURSO_AUTH_TOKEN (free hosted SQLite at turso.tech).
  * Item photos live in the same database, so there is no separate file storage to manage.
  */
+if (process.env.VERCEL && !process.env.TURSO_DATABASE_URL) {
+  throw new Error("TURSO_DATABASE_URL is not set. Vercel cannot keep a local database file; add TURSO_DATABASE_URL and TURSO_AUTH_TOKEN in Project Settings > Environment Variables.");
+}
 const url = process.env.TURSO_DATABASE_URL || "file:./data/romeros.db";
 if (url.startsWith("file:")) mkdirSync("data", { recursive: true });
 const db = createClient({ url, authToken: process.env.TURSO_AUTH_TOKEN });
