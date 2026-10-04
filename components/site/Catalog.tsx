@@ -17,7 +17,7 @@ function Chip({ active, onClick, children, tone = "pink" }: { active: boolean; o
       role="tab"
       aria-selected={active}
       onClick={onClick}
-      className={`rounded-full border-2 px-4 py-1.5 font-heading text-lg font-semibold transition hover:scale-105 ${active ? on : "border-line bg-surface hover:border-pink"}`}
+      className={`shrink-0 whitespace-nowrap rounded-full border-2 px-4 py-1.5 font-heading text-lg font-semibold transition hover:scale-105 ${active ? on : "border-line bg-surface hover:border-pink"}`}
     >
       {children}
     </button>
@@ -50,7 +50,7 @@ export function Catalog({ items, initialCat, initialOcc }: { items: Item[]; init
         <p className="mx-auto mt-3 max-w-xl text-lg text-muted">{t.catalog.sub}</p>
       </div>
 
-      <div className="mt-8 flex flex-wrap justify-center gap-2" role="tablist" aria-label={t.catalog.title}>
+      <div className="mt-8 scroll-row -mx-4 flex flex-nowrap items-center gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0" role="tablist" aria-label={t.catalog.title}>
         {(["all", ...CATEGORIES] as const).map((c) => (
           <Chip key={c} active={cat === c} onClick={() => setCat(c)}>
             {CAT_EMOJI[c]} {t.cat[c]} <span className="opacity-70">({counts(c)})</span>
@@ -58,8 +58,8 @@ export function Catalog({ items, initialCat, initialOcc }: { items: Item[]; init
         ))}
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center justify-center gap-2" role="tablist" aria-label={t.catalog.occasionLabel}>
-        <span className="font-heading font-semibold text-muted">{t.catalog.occasionLabel}:</span>
+      <div className="mt-3 scroll-row -mx-4 flex flex-nowrap items-center gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0" role="tablist" aria-label={t.catalog.occasionLabel}>
+        <span className="shrink-0 font-heading font-semibold text-muted">{t.catalog.occasionLabel}:</span>
         <Chip tone="purple" active={occ === "all"} onClick={() => setOcc("all")}>{t.catalog.allOccasions}</Chip>
         {OCCASIONS.map((o) => (
           <Chip tone="purple" key={o} active={occ === o} onClick={() => setOcc(o)}>{t.occ[o]}</Chip>
@@ -74,8 +74,8 @@ export function Catalog({ items, initialCat, initialOcc }: { items: Item[]; init
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden"
           >
-            <div className="mt-3 flex flex-wrap items-center justify-center gap-2" role="tablist" aria-label={t.catalog.forLabel}>
-              <span className="font-heading font-semibold text-muted">{t.catalog.forLabel}:</span>
+            <div className="mt-3 scroll-row -mx-4 flex flex-nowrap items-center gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0" role="tablist" aria-label={t.catalog.forLabel}>
+              <span className="shrink-0 font-heading font-semibold text-muted">{t.catalog.forLabel}:</span>
               {AUDIENCES.map((a) => (
                 <Chip tone="navy" key={a} active={aud === a} onClick={() => setAud(a)}>
                   {a === "girls" ? "👧 " : a === "boys" ? "👦 " : ""}{t.aud[a]}

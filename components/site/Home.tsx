@@ -64,8 +64,15 @@ function Hero({ settings }: { settings: Settings }) {
           </p>
         </div>
 
-        {/* illustrated showcase */}
-        <div className="relative mx-auto aspect-square w-full max-w-md">
+        {/* illustrated showcase: a tidy row on phones, a floating collage on desktop */}
+        <div className="grid grid-cols-3 gap-2.5 lg:hidden">
+          {[BounceHouse, Tent, TableChairs].map((Art, i) => (
+            <motion.div key={i} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 + i * 0.12, type: "spring", bounce: 0.4 }} className="card animate-float p-1.5" style={{ animationDelay: `${-i * 1.5}s` }}>
+              <Art className="w-full" />
+            </motion.div>
+          ))}
+        </div>
+        <div className="relative mx-auto hidden aspect-square w-full max-w-md lg:block">
           <div className="absolute inset-4 rounded-[3rem] bg-gradient-to-br from-sky/30 via-purple/20 to-pink/30 blur-2xl" />
           <motion.div initial={{ opacity: 0, scale: 0.7 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3, type: "spring", bounce: 0.4 }} className="card absolute left-0 top-0 w-[68%] -rotate-3 animate-float-slow p-3">
             <BounceHouse className="w-full" />

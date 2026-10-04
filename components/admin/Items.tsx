@@ -52,9 +52,9 @@ export function ItemList({ items, flash }: { items: Item[]; flash: "saved" | "de
         </motion.p>
       )}
 
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div className="scroll-row -mx-4 mt-6 flex flex-nowrap gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
         {(["all", ...CATEGORIES] as const).map((c) => (
-          <button key={c} onClick={() => setCat(c)} className={`rounded-full border-2 px-4 py-2 font-heading text-lg font-semibold ${cat === c ? "border-navy bg-navy text-bg" : "border-line bg-surface"}`}>
+          <button key={c} onClick={() => setCat(c)} className={`shrink-0 whitespace-nowrap rounded-full border-2 px-4 py-2 font-heading text-lg font-semibold ${cat === c ? "border-navy bg-navy text-bg" : "border-line bg-surface"}`}>
             {c === "all" ? a.all : t.cat[c]}
           </button>
         ))}
@@ -73,7 +73,7 @@ export function ItemList({ items, flash }: { items: Item[]; flash: "saved" | "de
               )}
             </div>
             <div className="min-w-0 flex-1 basis-40">
-              <p className="truncate font-heading text-2xl font-bold">{bi(it.name, lang)}</p>
+              <p className="font-heading text-2xl font-bold leading-tight">{bi(it.name, lang)}</p>
               <p className="text-muted">
                 {t.cat[it.category]} ·{" "}
                 {it.price === null ? a.noPrice : `$${it.price}${it.unit === "each" ? ` ${a.priceEach}` : it.unit === "event" ? ` ${a.priceEvent}` : ""}`}

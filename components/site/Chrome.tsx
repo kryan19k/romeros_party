@@ -26,7 +26,7 @@ export function Navbar({ phone }: { phone: string }) {
 
   return (
     <header className="sticky top-0 z-40 border-b-2 border-line bg-bg/85 backdrop-blur-md">
-      <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2">
+      <div className="mx-auto flex max-w-6xl items-center gap-2 px-3 py-2 sm:gap-3 sm:px-4">
         <Link href="/" className="shrink-0 transition hover:scale-105" aria-label={t.brand.name} onClick={() => setOpen(false)}>
           <Logo size="sm" />
         </Link>
@@ -47,13 +47,11 @@ export function Navbar({ phone }: { phone: string }) {
           })}
         </nav>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
           <LangToggle />
           <ThemeToggle />
-          <Link href="/quote" className="btn btn-pink relative !min-h-11 whitespace-nowrap !px-4 !py-1.5 text-base">
-            <span className="hidden sm:inline">{t.nav.quote}</span>
-            <span className="sm:hidden" aria-hidden>📝</span>
-            <span className="sr-only sm:hidden">{t.nav.quote}</span>
+          <Link href="/quote" className="btn btn-pink relative !hidden !min-h-11 whitespace-nowrap !px-4 !py-1.5 text-base sm:!inline-flex">
+            {t.nav.quote}
             {count > 0 && (
               <motion.span
                 key={count}
@@ -71,7 +69,7 @@ export function Navbar({ phone }: { phone: string }) {
           <button
             type="button"
             onClick={() => setOpen((o) => !o)}
-            className="grid size-11 place-items-center rounded-full border-2 border-line bg-surface text-2xl xl:hidden"
+            className="grid size-11 place-items-center rounded-full border-2 border-line bg-surface text-2xl xl:hidden max-sm:!size-10"
             aria-label={open ? t.nav.close : t.nav.menu}
             aria-expanded={open}
           >
@@ -111,10 +109,15 @@ export function Navbar({ phone }: { phone: string }) {
 /** Always-visible call / WhatsApp bar on phones: the fastest way to book. */
 export function MobileBar({ phone }: { phone: string }) {
   const { t } = useLang();
+  const { count } = useCart();
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-2 gap-2 border-t-2 border-line bg-bg/95 p-2 backdrop-blur-md sm:hidden">
-      <a href={telLink(phone)} className="btn btn-gold !min-h-12">📞 {t.nav.call}</a>
-      <a href={waLink(phone)} target="_blank" rel="noreferrer" className="btn btn-green !min-h-12">💬 WhatsApp</a>
+    <div className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 gap-1.5 border-t-2 border-line bg-bg/95 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-md sm:hidden">
+      <a href={telLink(phone)} className="btn btn-gold !min-h-12 !gap-1 !px-2 !text-base" aria-label={`${t.nav.call} ${phone}`}>📞 {t.nav.call}</a>
+      <a href={waLink(phone)} target="_blank" rel="noreferrer" className="btn btn-green !min-h-12 !gap-1 !px-2 !text-base">💬 <span className="sr-only">WhatsApp</span><span aria-hidden>Chat</span></a>
+      <Link href="/quote" className="btn btn-pink relative !min-h-12 !gap-1 !px-2 !text-base">
+        📝 {t.nav.quoteShort}
+        {count > 0 && <span className="absolute -right-1 -top-2 grid size-6 place-items-center rounded-full bg-gold text-sm font-bold text-[#1b1a58] ring-2 ring-bg">{count}</span>}
+      </Link>
     </div>
   );
 }

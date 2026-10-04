@@ -139,7 +139,7 @@ export function QuoteForm({ items, phone, initialMode }: { items: Item[]; phone:
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-heading text-xl font-semibold">{bi(item.name, lang)}</p>
+                    <p className="font-heading text-xl font-semibold leading-tight">{bi(item.name, lang)}</p>
                     <Price item={item} />
                   </div>
                   <div className="flex items-center gap-1 rounded-full border-2 border-line p-1">
