@@ -2,7 +2,7 @@ import type { Lang } from "./types";
 
 const en = {
   brand: {
-    name: "Romero's Party Supplies",
+    name: "Romero's Party Boutique",
     tagline: "Your best choice to celebrate!",
     slogan: "Your party, our equipment!",
   },
@@ -358,7 +358,7 @@ export type Dict = typeof en;
 
 const es: Dict = {
   brand: {
-    name: "Romero's Party Supplies",
+    name: "Romero's Party Boutique",
     tagline: "¡Tu mejor opción para celebrar!",
     slogan: "¡Tu fiesta, nuestro equipo!",
   },

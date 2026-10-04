@@ -56,6 +56,11 @@ function init() {
     if (first.rowsAffected) {
       await client().batch(SEED_ITEMS.map((i) => insertItem(i, true)), "write");
     }
+    // One-time rename of the store from "Party Supplies" to "Party Boutique" in saved text (About us, etc.).
+    const rename = await client().execute("INSERT OR IGNORE INTO meta (key, value) VALUES ('rename_boutique', '1')");
+    if (rename.rowsAffected) {
+      await client().execute("UPDATE settings SET data = REPLACE(data, 'Party Supplies', 'Party Boutique') WHERE id = 1");
+    }
     // Dresses, shoes, decor and supplies samples: added once, never re-added after the owner deletes them.
     const v2 = await client().execute("INSERT OR IGNORE INTO meta (key, value) VALUES ('seed_v2', '1')");
     if (v2.rowsAffected) {

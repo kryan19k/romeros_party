@@ -16,8 +16,8 @@ export const DEFAULT_SETTINGS: Settings = {
     en: "Call or message us on WhatsApp",
   },
   about: {
-    es: "Romero's Party Supplies es tu mejor opción para celebrar. Rentamos brincolines, carpas, mesas y sillas, y también vendemos vestidos y zapatos para bautizos, confirmaciones, primeras comuniones y quinceañeras, además de decoración y artículos para fiesta.\n\nNos encargamos del equipo para que tú disfrutes de la fiesta con tu familia y tus amigos. Cumpleaños, bodas, quinceañeras, bautizos o reuniones: ¡tu fiesta, nuestro equipo!",
-    en: "Romero's Party Supplies is your best choice to celebrate. We rent bounce houses, tents, tables and chairs, and we sell dresses and shoes for baptisms, confirmations, first communions and quinceañeras, plus party decor and supplies.\n\nWe take care of the equipment so you can enjoy the party with your family and friends. Birthdays, weddings, quinceañeras, baptisms or get-togethers: your party, our equipment!",
+    es: "Romero's Party Boutique es tu mejor opción para celebrar. Rentamos brincolines, carpas, mesas y sillas, y también vendemos vestidos y zapatos para bautizos, confirmaciones, primeras comuniones y quinceañeras, además de decoración y artículos para fiesta.\n\nNos encargamos del equipo para que tú disfrutes de la fiesta con tu familia y tus amigos. Cumpleaños, bodas, quinceañeras, bautizos o reuniones: ¡tu fiesta, nuestro equipo!",
+    en: "Romero's Party Boutique is your best choice to celebrate. We rent bounce houses, tents, tables and chairs, and we sell dresses and shoes for baptisms, confirmations, first communions and quinceañeras, plus party decor and supplies.\n\nWe take care of the equipment so you can enjoy the party with your family and friends. Birthdays, weddings, quinceañeras, baptisms or get-togethers: your party, our equipment!",
   },
 };
 

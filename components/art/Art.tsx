@@ -182,7 +182,7 @@ export function Truck({ className = "" }: { className?: string }) {
       <rect x="6" y="14" width="146" height="72" rx="10" fill="#fff" stroke="#262b9c" strokeWidth="4" />
       <rect x="6" y="14" width="146" height="20" rx="8" fill="#e8336d" />
       <text x="79" y="62" textAnchor="middle" fontFamily="Georgia,serif" fontWeight="900" fontSize="22" fill="#262b9c">ROMERO&apos;S</text>
-      <text x="79" y="78" textAnchor="middle" fontFamily="Georgia,serif" fontWeight="900" fontSize="9" fill="#d99a00">PARTY SUPPLIES</text>
+      <text x="79" y="78" textAnchor="middle" fontFamily="Georgia,serif" fontWeight="900" fontSize="9" fill="#d99a00">PARTY BOUTIQUE</text>
       <path d="M152 36 h40 l22 26 v24 h-62z" fill="#ffc21a" stroke="#262b9c" strokeWidth="4" strokeLinejoin="round" />
       <path d="M162 44 h26 l14 18 h-40z" fill="#bfe8ff" stroke="#262b9c" strokeWidth="3" strokeLinejoin="round" />
       <circle cx="46" cy="94" r="16" fill="#262b9c" /><circle cx="46" cy="94" r="7" fill="#fff" />

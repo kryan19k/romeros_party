@@ -1,4 +1,4 @@
-# Romero's Party Supplies
+# Romero's Party Boutique
 
 Bilingual (English / Español), light + dark party-rental website with a simple owner dashboard.
 Next.js 16 · Tailwind 4 · Motion · libSQL/Turso.
