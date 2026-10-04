@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/LocalLink";
 import { motion } from "motion/react";
 import { Balloon, BounceHouse, Bunting, CategoryArt, FallingConfetti, Tent, TableChairs, Truck } from "../art/Art";
 import { Logo } from "../Logo";
@@ -135,7 +135,7 @@ function Occasions() {
         {OCCASIONS.map((o) => (
           <StaggerItem key={o}>
             <Link
-              href={`/catalog?occ=${o}`}
+              href={`/occasion/${o}`}
               className={`group card flex h-full min-h-40 flex-col items-center justify-center gap-2 bg-gradient-to-br ${OCC_STYLE[o].c} p-5 text-center transition hover:-translate-y-2 hover:rotate-1 hover:border-pink`}
             >
               <span className="text-5xl transition duration-300 group-hover:scale-125 group-hover:-rotate-12">{OCC_STYLE[o].e}</span>
@@ -159,7 +159,7 @@ function Shop() {
       <Stagger className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {cats.map((c) => (
           <StaggerItem key={c}>
-            <Link href={`/catalog?cat=${c}`} className="card group block overflow-hidden transition hover:-translate-y-2 hover:border-pink">
+            <Link href={`/catalog/${c}`} className="card group block overflow-hidden transition hover:-translate-y-2 hover:border-pink">
               <div className={`grid aspect-square place-items-center bg-gradient-to-br ${SERVICE_COLORS[c]}`}>
                 <CategoryArt category={c} className="h-[80%] transition duration-500 group-hover:scale-110 group-hover:rotate-2" />
               </div>
@@ -184,7 +184,7 @@ function Services() {
       <Stagger className="mt-10 grid gap-6 md:grid-cols-3">
         {cats.map((c) => (
           <StaggerItem key={c}>
-            <Link href={`/catalog?cat=${c}`} className="card group block overflow-hidden transition hover:-translate-y-2 hover:border-pink">
+            <Link href={`/catalog/${c}`} className="card group block overflow-hidden transition hover:-translate-y-2 hover:border-pink">
               <div className={`grid aspect-[4/3] place-items-center bg-gradient-to-br ${SERVICE_COLORS[c]}`}>
                 <CategoryArt category={c} className="h-[82%] transition duration-500 group-hover:scale-110 group-hover:-rotate-2" />
               </div>

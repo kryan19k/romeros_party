@@ -35,3 +35,12 @@ read quote requests (call / WhatsApp buttons), and edit phones, delivery info an
 - `app/admin` owner dashboard
 - `lib/store.ts` storage layer (libSQL / Turso)
 - `lib/i18n.ts` all English/Spanish text
+
+## SEO (local: Perris, CA)
+
+- English lives at `/…`, Spanish at `/es/…` (hreflang, canonical, sitemap and `robots.txt` are generated).
+- Landing pages: `/catalog/<category>` and `/occasion/<occasion>` carry the Perris, CA search copy (`lib/seo-data.ts`).
+- Edit the nearby cities in `SERVICE_AREAS` (`lib/seo-data.ts`) so they match where the store really delivers.
+- Environment variables on the host:
+  - `NEXT_PUBLIC_SITE_URL` = the real domain, e.g. `https://yourdomain.com` (needed for canonical URLs and the sitemap)
+  - `GOOGLE_SITE_VERIFICATION` = token from Google Search Console (optional, adds the verification tag)

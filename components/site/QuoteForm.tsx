@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/LocalLink";
 import { useState, useTransition } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { CategoryArt } from "../art/Art";

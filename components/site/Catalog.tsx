@@ -1,11 +1,12 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/LocalLink";
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useLang } from "../Providers";
 import { ItemCard } from "./ItemCard";
 import { useCart } from "@/lib/cart";
+import { h1For } from "@/lib/seo-data";
 import { AUDIENCES, CATEGORIES, OCCASIONS, type Audience, type Category, type Item, type Occasion } from "@/lib/types";
 
 const CAT_EMOJI: Record<Category | "all", string> = { all: "✨", jumpers: "🏰", tents: "⛺", tables: "🪑", dresses: "👗", shoes: "👟", decor: "🎈", extras: "🎁" };
@@ -24,8 +25,10 @@ function Chip({ active, onClick, children, tone = "pink" }: { active: boolean; o
   );
 }
 
-export function Catalog({ items, initialCat, initialOcc }: { items: Item[]; initialCat: Category | "all"; initialOcc: Occasion | "all" }) {
-  const { t, f } = useLang();
+type SeoCopy = Record<"en" | "es", { name: string; intro: string }>;
+
+export function Catalog({ items, initialCat, initialOcc, seo }: { items: Item[]; initialCat: Category | "all"; initialOcc: Occasion | "all"; seo?: SeoCopy }) {
+  const { t, f, lang } = useLang();
   const [cat, setCat] = useState<Category | "all">(initialCat);
   const [occ, setOcc] = useState<Occasion | "all">(initialOcc);
   const [aud, setAud] = useState<Audience>("all");
@@ -46,8 +49,8 @@ export function Catalog({ items, initialCat, initialOcc }: { items: Item[]; init
   return (
     <div className="mx-auto max-w-6xl px-4 pb-32 pt-12">
       <div className="text-center">
-        <h1 className="text-5xl font-bold sm:text-6xl">🎈 {t.catalog.title}</h1>
-        <p className="mx-auto mt-3 max-w-xl text-lg text-muted">{t.catalog.sub}</p>
+        <h1 className="text-balance text-4xl font-bold sm:text-6xl">🎈 {seo ? h1For(seo[lang], lang) : t.catalog.title}</h1>
+        <p className="mx-auto mt-3 max-w-2xl text-lg text-muted">{seo ? seo[lang].intro : t.catalog.sub}</p>
       </div>
 
       <div className="mt-8 scroll-row -mx-4 flex flex-nowrap items-center gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0" role="tablist" aria-label={t.catalog.title}>

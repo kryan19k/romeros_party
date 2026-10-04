@@ -4,8 +4,8 @@ export const DEFAULT_SETTINGS: Settings = {
   phone1: "(951) 581-7266",
   phone2: "(909) 331-9553",
   deliveryArea: {
-    es: "Entregamos en los condados de Riverside y San Bernardino. ¡Llámanos y te confirmamos tu zona!",
-    en: "We deliver across Riverside and San Bernardino counties. Call us and we'll confirm your area!",
+    es: "Entregamos en Perris, Moreno Valley, Menifee, Hemet, Riverside y alrededores. ¡Llámanos y te confirmamos tu zona!",
+    en: "We deliver in Perris, Moreno Valley, Menifee, Hemet, Riverside and nearby. Call us and we'll confirm your area!",
   },
   deliveryFee: {
     es: "El costo de entrega depende de la distancia. Pide tu cotización y te damos el precio exacto.",

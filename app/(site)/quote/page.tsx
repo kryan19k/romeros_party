@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
 import { QuoteForm } from "@/components/site/QuoteForm";
+import { getLang, pageMeta } from "@/lib/seo";
+import { PAGE_SEO } from "@/lib/seo-data";
 import { getItems, getSettings } from "@/lib/store";
 
-export const metadata: Metadata = { title: "Cotización · Quote" };
+export async function generateMetadata(): Promise<Metadata> {
+  const m = PAGE_SEO.quote[await getLang()];
+  // The quote form has no search value on its own: keep it out of Google, let the links on it still count.
+  return pageMeta({ path: "/quote", title: m.title, description: m.desc, noindex: true });
+}
 
 export default async function QuotePage({ searchParams }: PageProps<"/quote">) {
   const { mode } = await searchParams;

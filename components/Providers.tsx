@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo } from "react";
 import { MotionConfig } from "motion/react";
 import { dicts, fmt, type Dict } from "@/lib/i18n";
 import type { Lang } from "@/lib/types";
@@ -21,12 +21,19 @@ export function useLang() {
 }
 
 export function Providers({ initialLang, children }: { initialLang: Lang; children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Lang>(initialLang);
+  // The language comes from the URL (/es/... is Spanish), so it only changes with a full page load.
+  const lang = initialLang;
 
   const setLang = useCallback((l: Lang) => {
-    setLangState(l);
-    document.documentElement.lang = l;
     document.cookie = `lang=${l}; path=/; max-age=31536000; samesite=lax`;
+    const { pathname, search, hash } = window.location;
+    if (pathname.startsWith("/admin")) {
+      window.location.reload();
+      return;
+    }
+    const base = pathname.replace(/^\/es(?=\/|$)/, "") || "/";
+    const next = l === "es" ? (base === "/" ? "/es" : `/es${base}`) : base;
+    window.location.assign(next + search + hash);
   }, []);
 
   const value = useMemo<LangCtx>(

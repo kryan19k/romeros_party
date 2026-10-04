@@ -43,8 +43,8 @@ const en = {
   },
   hero: {
     eyebrow: "Rentals, dresses & party decor",
-    title: "Party equipment",
-    titleHighlight: "rental",
+    title: "Party rentals",
+    titleHighlight: "in Perris, CA",
     sub: "We make your event a special day!",
     sub2: "Plus dresses, shoes and decor for baptisms, communions and quinceañeras.",
     ctaCatalog: "See what we rent",
@@ -219,6 +219,9 @@ const en = {
     contact: "Contact",
     owner: "Owner login",
     madeWith: "Made with love for your celebrations",
+    shop: "Popular",
+    location: "Perris, California",
+    serving: "Serving {areas} and nearby.",
   },
   notFound: { title: "Oops! This party page doesn't exist.", back: "Back to home" },
 
@@ -399,8 +402,8 @@ const es: Dict = {
   },
   hero: {
     eyebrow: "Renta, vestidos y decoración",
-    title: "Renta de equipo",
-    titleHighlight: "para fiestas",
+    title: "Renta para fiestas",
+    titleHighlight: "en Perris, CA",
     sub: "¡Hacemos de tu evento un día especial!",
     sub2: "Además vestidos, zapatos y decoración para bautizos, comuniones y quinceañeras.",
     ctaCatalog: "Ver catálogo",
@@ -575,6 +578,9 @@ const es: Dict = {
     contact: "Contacto",
     owner: "Acceso del dueño",
     madeWith: "Hecho con cariño para tus celebraciones",
+    shop: "Popular",
+    location: "Perris, California",
+    serving: "Servimos en {areas} y alrededores.",
   },
   notFound: { title: "¡Ups! Esta página de la fiesta no existe.", back: "Volver al inicio" },
 

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/LocalLink";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
@@ -9,11 +9,13 @@ import { LangToggle, ThemeToggle } from "../Toggles";
 import { useLang } from "../Providers";
 import { useCart } from "@/lib/cart";
 import { bi, telLink, waLink, type Bi } from "@/lib/types";
+import { SERVICE_AREAS } from "@/lib/seo-data";
+import type { Dict } from "@/lib/i18n";
 
 const LINKS = [
   { href: "/", key: "home" },
   { href: "/catalog", key: "catalog" },
-  { href: "/catalog?cat=dresses", key: "shop" },
+  { href: "/catalog/dresses", key: "shop" },
   { href: "/delivery", key: "delivery" },
   { href: "/about", key: "about" },
 ] as const;
@@ -21,6 +23,7 @@ const LINKS = [
 export function Navbar({ phone }: { phone: string }) {
   const { t } = useLang();
   const path = usePathname();
+  const norm = path.replace(/^\/es(?=\/|$)/, "") || "/";
   const { count } = useCart();
   const [open, setOpen] = useState(false);
 
@@ -33,7 +36,7 @@ export function Navbar({ phone }: { phone: string }) {
 
         <nav className="ml-4 hidden items-center gap-0.5 xl:flex" aria-label="Main">
           {LINKS.map((l) => {
-            const active = l.href === "/" ? path === "/" : !l.href.includes("?") && path.startsWith(l.href);
+            const active = l.href === "/" ? norm === "/" : norm === l.href || (l.href === "/catalog" ? norm === "/catalog" || (norm.startsWith("/catalog/") && !norm.startsWith("/catalog/dresses")) : norm.startsWith(`${l.href}/`));
             return (
               <Link
                 key={l.href}
@@ -93,7 +96,7 @@ export function Navbar({ phone }: { phone: string }) {
                   key={l.href}
                   href={l.href}
                   onClick={() => setOpen(false)}
-                  className={`rounded-2xl px-4 py-3 font-heading text-2xl font-medium ${path === l.href ? "bg-surface-2 text-pink" : ""}`}
+                  className={`rounded-2xl px-4 py-3 font-heading text-2xl font-medium ${norm === l.href ? "bg-surface-2 text-pink" : ""}`}
                 >
                   {t.nav[l.key]}
                 </Link>
@@ -122,14 +125,37 @@ export function MobileBar({ phone }: { phone: string }) {
   );
 }
 
+const POPULAR: { href: string; label: (t: Dict) => string }[] = [
+  { href: "/catalog/jumpers", label: (t) => t.cat.jumpers },
+  { href: "/catalog/tents", label: (t) => t.cat.tents },
+  { href: "/catalog/tables", label: (t) => t.cat.tables },
+  { href: "/catalog/dresses", label: (t) => t.cat.dresses },
+  { href: "/catalog/decor", label: (t) => t.cat.decor },
+  { href: "/occasion/quince", label: (t) => t.occ.quince },
+  { href: "/occasion/baptism", label: (t) => t.occ.baptism },
+  { href: "/occasion/communion", label: (t) => t.occ.communion },
+];
+
 export function Footer({ phone1, phone2, hours }: { phone1: string; phone2: string; hours: Bi }) {
-  const { t, lang } = useLang();
+  const { t, lang, f } = useLang();
   return (
     <footer className="mt-20 border-t-2 border-line bg-bg-2 pb-24 sm:pb-0">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 md:grid-cols-3">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 md:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-3">
           <Logo size="md" />
           <p className="font-heading text-lg font-medium text-muted">{t.brand.slogan}</p>
+          <p className="text-muted">📍 {t.footer.location}</p>
+          <p className="text-sm text-muted">{f(t.footer.serving, { areas: SERVICE_AREAS.slice(0, 6).join(", ") })}</p>
+        </div>
+        <div>
+          <h3 className="mb-3 text-xl">{t.footer.shop}</h3>
+          <ul className="space-y-1.5">
+            {POPULAR.map((p) => (
+              <li key={p.href}>
+                <Link href={p.href} className="hover:text-pink hover:underline">{p.label(t)}</Link>
+              </li>
+            ))}
+          </ul>
         </div>
         <div>
           <h3 className="mb-3 text-xl">{t.footer.explore}</h3>
