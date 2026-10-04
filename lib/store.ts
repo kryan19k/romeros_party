@@ -1,5 +1,5 @@
 import "server-only";
-import { createClient, type Row } from "@libsql/client";
+import { createClient, type Client, type Row } from "@libsql/client";
 import { mkdirSync } from "fs";
 import { DEFAULT_SETTINGS, SEED_ITEMS, SEED_ITEMS_V2 } from "./seed";
 import { OCCASIONS, type Item, type Occasion, type QuoteRequest, type Settings } from "./types";
@@ -10,12 +10,17 @@ import { OCCASIONS, type Item, type Occasion, type QuoteRequest, type Settings }
  *  - Production: set TURSO_DATABASE_URL + TURSO_AUTH_TOKEN (free hosted SQLite at turso.tech).
  * Item photos live in the same database, so there is no separate file storage to manage.
  */
-if (process.env.VERCEL && !process.env.TURSO_DATABASE_URL) {
-  throw new Error("TURSO_DATABASE_URL is not set. Vercel cannot keep a local database file; add TURSO_DATABASE_URL and TURSO_AUTH_TOKEN in Project Settings > Environment Variables.");
+// Created on first use (not at import) so `next build` works without database credentials.
+let _db: Client | null = null;
+function client(): Client {
+  if (_db) return _db;
+  if (process.env.VERCEL && !process.env.TURSO_DATABASE_URL) {
+    throw new Error("TURSO_DATABASE_URL is not set. Vercel cannot keep a local database file; add TURSO_DATABASE_URL and TURSO_AUTH_TOKEN in Project Settings > Environment Variables.");
+  }
+  const url = process.env.TURSO_DATABASE_URL || "file:./data/romeros.db";
+  if (url.startsWith("file:")) mkdirSync("data", { recursive: true });
+  return (_db = createClient({ url, authToken: process.env.TURSO_AUTH_TOKEN }));
 }
-const url = process.env.TURSO_DATABASE_URL || "file:./data/romeros.db";
-if (url.startsWith("file:")) mkdirSync("data", { recursive: true });
-const db = createClient({ url, authToken: process.env.TURSO_AUTH_TOKEN });
 
 const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS items (
@@ -38,23 +43,23 @@ const SCHEMA = [
 let ready: Promise<void> | null = null;
 function init() {
   ready ??= (async () => {
-    await db.batch(SCHEMA, "write");
-    const first = await db.execute({ sql: "INSERT OR IGNORE INTO settings (id, data) VALUES (1, ?)", args: [JSON.stringify(DEFAULT_SETTINGS)] });
+    await client().batch(SCHEMA, "write");
+    const first = await client().execute({ sql: "INSERT OR IGNORE INTO settings (id, data) VALUES (1, ?)", args: [JSON.stringify(DEFAULT_SETTINGS)] });
     // Columns added after the first release (older databases get them here).
-    const cols = new Set((await db.execute("PRAGMA table_info(items)")).rows.map((c) => String(c.name)));
+    const cols = new Set((await client().execute("PRAGMA table_info(items)")).rows.map((c) => String(c.name)));
     const add: [string, string][] = [
       ["occasions", "TEXT NOT NULL DEFAULT '[]'"],
       ["audience", "TEXT NOT NULL DEFAULT 'all'"],
       ["sizes", "TEXT NOT NULL DEFAULT ''"],
     ];
-    for (const [c, def] of add) if (!cols.has(c)) await db.execute(`ALTER TABLE items ADD COLUMN ${c} ${def}`);
+    for (const [c, def] of add) if (!cols.has(c)) await client().execute(`ALTER TABLE items ADD COLUMN ${c} ${def}`);
     if (first.rowsAffected) {
-      await db.batch(SEED_ITEMS.map((i) => insertItem(i, true)), "write");
+      await client().batch(SEED_ITEMS.map((i) => insertItem(i, true)), "write");
     }
     // Dresses, shoes, decor and supplies samples: added once, never re-added after the owner deletes them.
-    const v2 = await db.execute("INSERT OR IGNORE INTO meta (key, value) VALUES ('seed_v2', '1')");
+    const v2 = await client().execute("INSERT OR IGNORE INTO meta (key, value) VALUES ('seed_v2', '1')");
     if (v2.rowsAffected) {
-      await db.batch(SEED_ITEMS_V2.map((i) => insertItem(i, true)), "write");
+      await client().batch(SEED_ITEMS_V2.map((i) => insertItem(i, true)), "write");
     }
   })().catch((e) => {
     ready = null;
@@ -102,7 +107,7 @@ const toRequest = (r: Row): QuoteRequest => ({
 
 async function run(sql: string, args: (string | number | null)[] = []) {
   await init();
-  return db.execute({ sql, args });
+  return client().execute({ sql, args });
 }
 
 // ───────────── items ─────────────
@@ -115,7 +120,7 @@ export async function getItem(id: string): Promise<Item | null> {
 }
 export async function upsertItem(item: Item): Promise<void> {
   await init();
-  await db.execute(insertItem(item));
+  await client().execute(insertItem(item));
 }
 export async function setItemAvailable(id: string, available: boolean) {
   await run("UPDATE items SET available = ?, updated_at = ? WHERE id = ?", [available ? 1 : 0, new Date().toISOString(), id]);
@@ -155,7 +160,7 @@ export async function saveSettings(s: Settings): Promise<void> {
 const TYPES: Record<string, string> = { jpg: "image/jpeg", png: "image/png", webp: "image/webp" };
 export async function uploadPhoto(name: string, buf: Buffer): Promise<void> {
   await init();
-  await db.execute({
+  await client().execute({
     sql: "INSERT OR REPLACE INTO photos (name, type, data) VALUES (?,?,?)",
     args: [name, TYPES[name.split(".").pop() ?? "jpg"], new Uint8Array(buf)],
   });
