@@ -1,5 +1,2 @@
-/** Public URL of an uploaded item photo (Supabase Storage in production, local route in dev). */
-export function imageSrc(name: string): string {
-  const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  return base ? `${base}/storage/v1/object/public/items/${name}` : `/uploads/${name}`;
-}
+/** URL of an uploaded item photo (served from the database by app/uploads/[name]). */
+export const imageSrc = (name: string) => `/uploads/${name}`;

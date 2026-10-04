@@ -1,27 +1,28 @@
 # Romero's Party Supplies
 
 Bilingual (English / Español), light + dark party-rental website with a simple owner dashboard.
-Next.js 16 · Tailwind 4 · Motion · Supabase.
+Next.js 16 · Tailwind 4 · Motion · libSQL/Turso.
 
 ## Run it
 
 ```bash
 npm install
-cp .env.example .env.local   # then fill it in
+cp .env.example .env.local   # set ADMIN_PASSWORD and SESSION_SECRET
 npm run dev
 ```
 
-Without Supabase keys the site stores data in `./data` (JSON + photos) so you can develop offline.
+Out of the box the data (items, requests, info and item photos) lives in a local SQLite file, `./data/romeros.db`.
+Tables and sample items are created automatically on first run.
 
-## Supabase setup (production)
+## Production database (free): Turso
 
-1. Create a project at supabase.com.
-2. SQL Editor → run `supabase/schema.sql` (tables + the public `items` photo bucket).
-3. Project Settings → API: copy the **Project URL** and the **service_role** key into
-   `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` (server only, never expose it).
-4. Set `ADMIN_PASSWORD` (the owner's password) and `SESSION_SECRET` (any long random string).
+```bash
+turso db create romeros
+turso db show romeros --url          # -> TURSO_DATABASE_URL
+turso db tokens create romeros       # -> TURSO_AUTH_TOKEN
+```
 
-Sample items and default info are inserted automatically the first time the site runs.
+Put both in the host's environment variables (plus `ADMIN_PASSWORD` and `SESSION_SECRET`). Same code, no migration step.
 
 ## Owner dashboard: `/admin`
 
@@ -32,5 +33,5 @@ read quote requests (call / WhatsApp buttons), and edit phones, delivery info an
 
 - `app/(site)` public pages: home, catalog, delivery, about, quote
 - `app/admin` owner dashboard
-- `lib/store.ts` storage layer (Supabase, or local JSON fallback)
+- `lib/store.ts` storage layer (libSQL / Turso)
 - `lib/i18n.ts` all English/Spanish text
